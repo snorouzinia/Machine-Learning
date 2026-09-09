@@ -1,0 +1,7 @@
+# Project requirements
+#
+# This repository does not use Python package dependencies.
+# The PDF build script requires LibreOffice to be installed locally.
+
+
+macOS or another Unix-like shell environment with Bash
