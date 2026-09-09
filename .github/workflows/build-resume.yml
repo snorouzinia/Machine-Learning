@@ -6,6 +6,7 @@ on:
     paths:
       - "main.tex"
       - "scripts/build_pdf.sh"
+      - ".github/workflows/build-pdf.yml"
   workflow_dispatch:
 
 permissions:
@@ -20,7 +21,7 @@ jobs:
       - name: Install LaTeX
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base
+          sudo apt-get install -y texlive-latex-extra
       - name: Build PDF
         run: |
           bash scripts/build_pdf.sh
