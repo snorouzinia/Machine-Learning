@@ -1,10 +1,10 @@
-name: Build Resume PDF
+name: Build HW PDF
 
 on:
   push:
     branches: ["main"]
     paths:
-      - "main.tex"
+      - "HW*/**"
       - "scripts/build_pdf.sh"
       - ".github/workflows/build-pdf.yml"
   workflow_dispatch:
@@ -17,19 +17,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Install LaTeX
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive-latex-extra
+
+      - name: Find changed homework
+        id: changed
+        run: |
+          git diff --name-only HEAD^ HEAD | \
+            grep -oE '^HW[0-9]+' | \
+            sort -u > changed_hw.txt || true
+
+          echo "Changed homework:"
+          cat changed_hw.txt
+
       - name: Build PDF
         run: |
-          bash scripts/build_pdf.sh
+          while read HW; do
+            bash scripts/build_pdf.sh "$HW"
+          done < changed_hw.txt
 
       - name: Commit PDF
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Sara_Norouzinia_Resume.pdf
-          git diff --cached --quiet || git commit -m "Update resume PDF"
+          git add HW*/non-programming/main.pdf
+          git diff --cached --quiet || git commit -m "Update HW PDF"
           git push
